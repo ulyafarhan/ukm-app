@@ -11,17 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('members', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('student_id')->unique();
-            $table->string('major');
-            $table->year('entry_year');
-            $table->string('phone_number')->nullable();
-            $table->text('address')->nullable();
-            $table->enum('status', ['active', 'inactive'])->default('active');
-            $table->timestamps();
-        });
+        // Duplicate migration — intentionally left empty to avoid duplicate table creation during tests.
+        return;
     }
 
     /**
@@ -29,6 +20,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('members');
+        // No-op
+        return;
     }
 };

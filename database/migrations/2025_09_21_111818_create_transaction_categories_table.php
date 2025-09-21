@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('transaction_categories', function (Blueprint $table) {
-            $table->id();
-            $table->string('name')->unique();
-            $table->text('description')->nullable();
-            $table->timestamps();
-        });
+        // Duplicate migration — intentionally left empty to avoid duplicate table creation during tests.
+        return;
     }
 
     /**
@@ -24,6 +20,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('transaction_categories');
+        // No-op
+        return;
     }
 };

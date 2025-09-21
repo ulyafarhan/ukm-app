@@ -11,16 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('transactions', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('transaction_category_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('user_id')->constrained()->comment('Dicatat oleh');
-            $table->string('description');
-            $table->decimal('amount', 15, 2);
-            $table->enum('type', ['income', 'outcome']);
-            $table->date('transaction_date');
-            $table->timestamps();
-        });
+        // Duplicate migration — intentionally left empty to avoid duplicate table creation during tests.
+        return;
     }
 
     /**
@@ -28,6 +20,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('transactions');
+        // No-op
+        return;
     }
 };

@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('document_categories', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        // Duplicate migration — intentionally left empty to avoid duplicate table creation during tests.
+        return;
     }
 
     /**
@@ -22,6 +20,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('document_categories');
+        // No-op
+        return;
     }
 };

@@ -11,15 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('documents', function (Blueprint $table) {
-            $table->id();
-            $table->string('title');
-            $table->text('description')->nullable();
-            $table->string('file_path');
-            $table->foreignId('document_category_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('user_id')->constrained()->comment('Pengunggah');
-            $table->timestamps();
-        });
+        // Duplicate migration — intentionally left empty to avoid duplicate table creation during tests.
+        return;
     }
 
     /**
@@ -27,6 +20,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('documents');
+        // No-op
+        return;
     }
 };

@@ -11,17 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('events', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->text('description')->nullable();
-            $table->dateTime('start_date');
-            $table->dateTime('end_date')->nullable();
-            $table->string('location')->nullable();
-            $table->enum('status', ['planned', 'ongoing', 'completed', 'cancelled'])->default('planned');
-            $table->foreignId('user_id')->constrained()->comment('Penanggung Jawab');
-            $table->timestamps();
-        });
+        // Duplicate migration — intentionally left empty to avoid duplicate table creation during tests.
+        return;
     }
 
     /**
@@ -29,6 +20,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('events');
+        // No-op
+        return;
     }
 };
