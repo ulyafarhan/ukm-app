@@ -73,7 +73,7 @@
         <tr>
             <td>
                 {{-- Ganti `logo.png` dengan path logo Anda di folder public --}}
-                <img src="{{ public_path('images/logo.png') }}" alt="Logo" class="logo">
+                <img src="{{ public_path('images/logo-ptq.svg') }}" alt="Logo" class="logo">
             </td>
             <td class="text-kop">
                 <h1>UNIVERSITAS MALIKUSSALEH</h1>

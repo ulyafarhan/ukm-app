@@ -31,7 +31,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->brandName('UKM PTQ UNIMAL')
-            ->brandLogo(asset('images/logo.png'))
+            ->brandLogo(asset('images/logo-ptq.svg'))
             ->brandLogoHeight('40px')
             ->favicon(asset('images/favicon.png'))
             ->darkMode(false)

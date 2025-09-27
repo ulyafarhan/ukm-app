@@ -64,7 +64,7 @@
 
     <table class="kop-surat">
         <tr>
-            <td><img src="{{ public_path('images/logo.png') }}" alt="Logo" class="logo"></td>
+            <td><img src="{{ public_path('images/logo-ptq.svg') }}" alt="Logo" class="logo"></td>
             <td class="text-kop">
                 <h1>UNIVERSITAS MALIKUSSALEH</h1>
                 <h2>UNIT KEGIATAN MAHASISWA (UKM) PENGEMBANGAN TILAWATIL QUR'AN</h2>
