@@ -10,6 +10,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
+
 class TransactionResource extends Resource
 {
     protected static ?string $model = Transaction::class;
@@ -81,6 +82,7 @@ class TransactionResource extends Resource
             'index' => Pages\ListTransactions::route('/'),
             'create' => Pages\CreateTransaction::route('/create'),
             'edit' => Pages\EditTransaction::route('/{record}/edit'),
+            'laporan' => Pages\LaporanTransaksi::route('/laporan'),
         ];
     }    
 }
