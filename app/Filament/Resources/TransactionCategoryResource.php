@@ -16,18 +16,19 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class TransactionCategoryResource extends Resource
 {
     protected static ?string $model = TransactionCategory::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    protected static ?string $navigationIcon = 'heroicon-o-tag';
+    protected static ?string $modelLabel = 'Kategori Transaksi';
+    protected static ?string $pluralModelLabel = 'Kategori Transaksi';
+    protected static ?string $navigationGroup = 'Manajemen Keuangan';
+    protected static ?int $navigationSort = 2;
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')->required(),
-                Forms\Components\Textarea::make('description')->columnSpanFull(),
+                Forms\Components\TextInput::make('name')->label('Nama Kategori')->required()->maxLength(255),
+                Forms\Components\Textarea::make('description')->label('Deskripsi')->columnSpanFull(),
             ]);
     }
-
     public static function table(Table $table): Table
     {
         return $table

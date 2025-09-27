@@ -16,16 +16,10 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class DocumentCategoryResource extends Resource
 {
     protected static ?string $model = DocumentCategory::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                //
-            ]);
-    }
+    protected static ?string $navigationIcon = 'heroicon-o-folder';
+    protected static ?string $modelLabel = 'Kategori Dokumen';
+    protected static ?string $pluralModelLabel = 'Kategori Dokumen';
+    protected static ?string $navigationGroup = 'Administrasi';
 
     public static function table(Table $table): Table
     {

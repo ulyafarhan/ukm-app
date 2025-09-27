@@ -16,6 +16,7 @@ class Transaction extends Model
         'description',
         'transaction_date',
         'type',
+        'receipt_path',
     ];
 
     protected function casts(): array

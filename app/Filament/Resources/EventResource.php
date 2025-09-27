@@ -13,22 +13,19 @@ use Filament\Tables\Table;
 class EventResource extends Resource
 {
     protected static ?string $model = Event::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-calendar';
+    protected static ?string $modelLabel = 'Acara';
+    protected static ?string $pluralModelLabel = 'Acara';
+    protected static ?string $navigationGroup = 'Manajemen Kegiatan';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
-                Forms\Components\DateTimePicker::make('date')
-                    ->required(),
-                Forms\Components\TextInput::make('location')
-                    ->maxLength(255),
+                Forms\Components\TextInput::make('title')->label('Nama Acara')->required()->maxLength(255),
+                Forms\Components\Textarea::make('description')->label('Deskripsi')->columnSpanFull(),
+                Forms\Components\DateTimePicker::make('date')->label('Tanggal & Waktu')->required(),
+                Forms\Components\TextInput::make('location')->label('Lokasi')->maxLength(255),
             ]);
     }
 
@@ -36,9 +33,9 @@ class EventResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')->searchable(),
-                Tables\Columns\TextColumn::make('date')->dateTime()->sortable(),
-                Tables\Columns\TextColumn::make('location')->searchable(),
+                Tables\Columns\TextColumn::make('title')->label('Nama Acara')->searchable(),
+                Tables\Columns\TextColumn::make('date')->label('Tanggal')->dateTime()->sortable(),
+                Tables\Columns\TextColumn::make('location')->label('Lokasi')->searchable(),
             ])
             ->filters([
                 //

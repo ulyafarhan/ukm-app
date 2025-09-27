@@ -13,23 +13,21 @@ use Filament\Tables\Table;
 class DocumentResource extends Resource
 {
     protected static ?string $model = Document::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $modelLabel = 'Dokumen';
+    protected static ?string $pluralModelLabel = 'Dokumen';
+    protected static ?string $navigationGroup = 'Administrasi';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Select::make('document_category_id')
+                Forms\Components\TextInput::make('title')->label('Judul Dokumen')->required()->maxLength(255),
+                Forms\Components\Select::make('document_category_id')->label('Kategori')
                     ->relationship('documentCategory', 'name')
                     ->required(),
-                Forms\Components\FileUpload::make('file_path')
-                    ->required(),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
+                Forms\Components\FileUpload::make('file_path')->label('File Dokumen')->required(),
+                Forms\Components\Textarea::make('description')->label('Deskripsi')->columnSpanFull(),
             ]);
     }
 
@@ -37,9 +35,9 @@ class DocumentResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')->searchable(),
-                Tables\Columns\TextColumn::make('documentCategory.name')->sortable(),
-                Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable(),
+                Tables\Columns\TextColumn::make('title')->label('Judul')->searchable(),
+                Tables\Columns\TextColumn::make('documentCategory.name')->label('Kategori')->sortable(),
+                Tables\Columns\TextColumn::make('created_at')->label('Tanggal Upload')->dateTime()->sortable(),
             ])
             ->filters([
                 //
