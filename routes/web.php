@@ -1,45 +1,71 @@
 <?php
 
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
-
+use App\Http\Controllers\PublicPageController; 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserDashboardController;
 use App\Http\Controllers\Member\MemberPageController;
 use App\Http\Controllers\Member\FinanceController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\DocumentController;
-use App\Http\Controllers\LandingPageController;
-use App\Http\Controllers\UserDashboardController;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| Public Routes
 |--------------------------------------------------------------------------
 */
 
-// 🔹 Landing Page (Publik)
-Route::get('/', [LandingPageController::class, 'index'])->name('landing');
+// Landing page
+Route::get('/', [LandingPageController::class, 'index'])
+    ->name('landing');
 
-// 🔹 Dashboard Publik (opsional, jika ingin tampilkan versi umum)
-Route::get('/dashboard', [LandingPageController::class, 'index'])->name('dashboard.public');
+// Optional public dashboard view
+Route::get('/dashboard', [LandingPageController::class, 'index'])
+    ->name('dashboard.public');
 
-// 🔹 Rute untuk User yang sudah login & terverifikasi
+// News listing & detail
+Route::get('/berita', [PublicPageController::class, 'news'])
+    ->name('news.index');
+Route::get('/berita/{event:id}', [PublicPageController::class, 'newsDetail'])
+    ->name('news.detail');
+
+/*
+|--------------------------------------------------------------------------
+| Authentication Routes
+|--------------------------------------------------------------------------
+|
+| Provides routes for login, registration, password reset, email
+| verification, etc.
+|
+*/
+require __DIR__ . '/auth.php';
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated & Verified User Routes
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Dashboard khusus user login → diarahkan ke controller baru
-    Route::get('/app', [UserDashboardController::class, 'index'])->name('dashboard');
+    // Main app dashboard
+    Route::get('/app', [UserDashboardController::class, 'index'])
+        ->name('dashboard');
 
-    // Profile
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    // Profile management
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])
+        ->name('profile.destroy');
 
-    // Modul lain
-    Route::get('/members', [MemberPageController::class, 'index'])->name('members.index');
-    Route::get('/finance', [FinanceController::class, 'index'])->name('finance.index');
-    Route::get('/events', [EventController::class, 'index'])->name('events.index');
-    Route::get('/documents', [DocumentController::class, 'index'])->name('documents.index');
+    // Member modules
+    Route::get('/members', [MemberPageController::class, 'index'])
+        ->name('members.index');
+    Route::get('/finance', [FinanceController::class, 'index'])
+        ->name('finance.index');
+    Route::get('/events', [EventController::class, 'index'])
+        ->name('events.index');
+    Route::get('/documents', [DocumentController::class, 'index'])
+        ->name('documents.index');
 });
 
-// 🔹 Rute bawaan untuk otentikasi
-require __DIR__ . '/auth.php';

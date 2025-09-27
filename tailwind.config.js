@@ -7,7 +7,8 @@ export default {
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
-        './resources/js/**/*.jsx',
+        './resources/js/**/*.jsx', // <-- Pastikan baris ini ada
+        './resources/js/Pages/Public/*.jsx', // <-- TAMBAHKAN BARIS INI
     ],
 
     theme: {
