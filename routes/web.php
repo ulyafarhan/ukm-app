@@ -1,10 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PublicPageController; 
+use App\Http\Controllers\PublicPageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserDashboardController;
-use App\Http\Controllers\Member\MemberPageController;
+use App\Http\Controllers\MemberPageController; // Perbaikan namespace
 use App\Http\Controllers\Member\FinanceController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\DocumentController;
@@ -15,28 +15,20 @@ use App\Http\Controllers\DocumentController;
 |--------------------------------------------------------------------------
 */
 
-// Landing page
-Route::get('/', [LandingPageController::class, 'index'])
-    ->name('landing');
+// Halaman utama (landing page)
+Route::get('/', [PublicPageController::class, 'home'])
+    ->name('home');
 
-// Optional public dashboard view
-Route::get('/dashboard', [LandingPageController::class, 'index'])
-    ->name('dashboard.public');
-
-// News listing & detail
-Route::get('/berita', [PublicPageController::class, 'news'])
+// Rute berita & detailnya
+Route::get('/news', [PublicPageController::class, 'news'])
     ->name('news.index');
-Route::get('/berita/{event:id}', [PublicPageController::class, 'newsDetail'])
+Route::get('/news/{event}', [PublicPageController::class, 'newsDetail'])
     ->name('news.detail');
 
 /*
 |--------------------------------------------------------------------------
 | Authentication Routes
 |--------------------------------------------------------------------------
-|
-| Provides routes for login, registration, password reset, email
-| verification, etc.
-|
 */
 require __DIR__ . '/auth.php';
 
@@ -46,11 +38,11 @@ require __DIR__ . '/auth.php';
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Main app dashboard
+    // Dashboard utama aplikasi
     Route::get('/app', [UserDashboardController::class, 'index'])
         ->name('dashboard');
 
-    // Profile management
+    // Manajemen profil
     Route::get('/profile', [ProfileController::class, 'edit'])
         ->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])
@@ -58,7 +50,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])
         ->name('profile.destroy');
 
-    // Member modules
+    // Modul untuk member
     Route::get('/members', [MemberPageController::class, 'index'])
         ->name('members.index');
     Route::get('/finance', [FinanceController::class, 'index'])
@@ -68,4 +60,3 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/documents', [DocumentController::class, 'index'])
         ->name('documents.index');
 });
-

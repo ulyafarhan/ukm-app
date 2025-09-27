@@ -3,59 +3,54 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
-use App\Models\Member;
-use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class PublicPageController extends Controller
 {
-    /**
-     * Data dasar yang dibutuhkan di semua halaman publik.
-     */
-    private function getBaseProps(): array
-    {
-        return [
-            'auth' => [
-                'user' => auth()->user(),
-            ],
-            'canLogin' => Route::has('login'),
-            'canRegister' => Route::has('register'),
-        ];
-    }
-
-    /**
-     * Menampilkan halaman utama (Home).
-     */
     public function home()
     {
-        $latestEvents = Event::latest('date')->limit(3)->get();
-        $memberCount = Member::where('status', 'active')->count();
+        // Mengambil 3 event/berita terbaru untuk ditampilkan di halaman utama
+        $latestEvents = Event::latest()->take(3)->get()->map(function ($event) {
+            return [
+                'id' => $event->id,
+                'title' => $event->title,
+                'image_url' => $event->image,
+                'created_at' => $event->created_at,
+            ];
+        });
 
-        return Inertia::render('Public/Home', array_merge($this->getBaseProps(), [
-            'latestEvents' => $latestEvents,
-            'memberCount' => $memberCount,
-        ]));
+        return Inertia::render('Public/Home', [
+            'events' => $latestEvents
+        ]);
     }
 
-    /**
-     * Menampilkan daftar semua berita/kegiatan.
-     */
     public function news()
     {
-        $allEvents = Event::latest('date')->paginate(9);
-
-        return Inertia::render('Public/NewsIndex', array_merge($this->getBaseProps(), [
-            'events' => $allEvents,
-        ]));
+        $events = Event::latest()->paginate(9)->through(function ($event) {
+            return [
+                'id' => $event->id,
+                'title' => $event->title,
+                'content' => $event->content,
+                'image_url' => $event->image,
+                'created_at' => $event->created_at,
+            ];
+        });
+        return Inertia::render('Public/NewsIndex', [
+            'events' => $events
+        ]);
     }
 
-    /**
-     * Menampilkan detail satu berita/kegiatan.
-     */
     public function newsDetail(Event $event)
     {
-        return Inertia::render('Public/NewsDetail', array_merge($this->getBaseProps(), [
-            'event' => $event,
-        ]));
+        return Inertia::render('Public/NewsDetail', [
+            'event' => [
+                'id' => $event->id,
+                'title' => $event->title,
+                'content' => $event->content,
+                'image_url' => $event->image,
+                'created_at' => $event->created_at,
+            ]
+        ]);
     }
 }

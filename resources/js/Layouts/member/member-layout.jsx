@@ -59,7 +59,7 @@ export default function MemberLayout({ user, children }) {
                     <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
                         <Link href="/" className="flex items-center gap-2 font-semibold">
                             <Package2 className="h-6 w-6" />
-                            <span className="">UKM APP</span>
+                            <span className="">UKM PTQ</span>
                         </Link>
                     </div>
                     <div className="flex-1">
@@ -100,7 +100,7 @@ export default function MemberLayout({ user, children }) {
                                     className="flex items-center gap-2 text-lg font-semibold mb-4"
                                 >
                                     <Package2 className="h-6 w-6" />
-                                    <span>UKM APP</span>
+                                    <span>UKM PTQ</span>
                                 </Link>
                                 {navLinks.map((link) => (
                                     <Link
