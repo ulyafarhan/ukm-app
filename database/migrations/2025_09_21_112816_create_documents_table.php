@@ -6,21 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        // Duplicate migration — intentionally left empty to avoid duplicate table creation during tests.
-        return;
+        Schema::create('documents', function (Blueprint $table) {
+            $table->id();
+            $table->string('title');
+            $table->foreignId('document_category_id')->constrained()->cascadeOnDelete();
+            $table->string('file_path');
+            $table->text('description')->nullable();
+            $table->timestamps();
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        // No-op
-        return;
+        Schema::dropIfExists('documents');
     }
 };

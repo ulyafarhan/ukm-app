@@ -6,21 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        // Duplicate migration — intentionally left empty to avoid duplicate table creation during tests.
-        return;
+        Schema::create('members', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('student_id')->unique();
+            $table->string('major');
+            $table->year('entry_year');
+            $table->string('phone_number')->nullable();
+            $table->text('address')->nullable();
+            $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->timestamps();
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        // No-op
-        return;
+        Schema::dropIfExists('members');
     }
 };

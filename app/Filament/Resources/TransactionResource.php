@@ -3,32 +3,40 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TransactionResource\Pages;
-use App\Filament\Resources\TransactionResource\RelationManagers;
 use App\Models\Transaction;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TransactionResource extends Resource
 {
     protected static ?string $model = Transaction::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-banknotes';
 
-    
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('transaction_category_id')->relationship('category', 'name')->required(),
-                Forms\Components\DatePicker::make('transaction_date')->required()->default(now()),
-                Forms\Components\TextInput::make('description')->required()->columnSpanFull(),
-                Forms\Components\ToggleButtons::make('type')->options(['income' => 'Pemasukan', 'outcome' => 'Pengeluaran'])->required()->inline(),
-                Forms\Components\TextInput::make('amount')->required()->numeric()->prefix('Rp'),
+                Forms\Components\Select::make('transaction_category_id')
+                    ->relationship('transactionCategory', 'name')
+                    ->required(),
+                Forms\Components\TextInput::make('amount')
+                    ->required()
+                    ->numeric()
+                    ->prefix('Rp'),
+                Forms\Components\DatePicker::make('transaction_date')
+                    ->required(),
+                Forms\Components\Radio::make('type')
+                    ->options([
+                        'income' => 'Pemasukan',
+                        'expense' => 'Pengeluaran',
+                    ])
+                    ->required(),
+                Forms\Components\Textarea::make('description')
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -36,11 +44,24 @@ class TransactionResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('transaction_date')->date('d M Y')->sortable(),
-                Tables\Columns\TextColumn::make('description')->searchable(),
-                Tables\Columns\TextColumn::make('category.name'),
+                Tables\Columns\TextColumn::make('transactionCategory.name')->sortable(),
                 Tables\Columns\TextColumn::make('amount')->money('IDR')->sortable(),
-                Tables\Columns\TextColumn::make('type')->badge()->color(fn(string $state) => $state === 'income' ? 'success' : 'danger'),
+                Tables\Columns\TextColumn::make('transaction_date')->date()->sortable(),
+                Tables\Columns\TextColumn::make('type')->badge()->color(fn (string $state): string => match ($state) {
+                    'income' => 'success',
+                    'expense' => 'danger',
+                }),
+            ])
+            ->filters([
+                //
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
             ]);
     }
 
