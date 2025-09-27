@@ -7,14 +7,22 @@ export default {
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
-        './resources/js/**/*.jsx', // <-- Pastikan baris ini ada
-        './resources/js/Pages/Public/*.jsx', // <-- TAMBAHKAN BARIS INI
+        './resources/js/**/*.jsx',
     ],
 
     theme: {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+            },
+            keyframes: {
+                'gradient-x': {
+                    '0%, 100%': { 'background-position': '0% 50%' },
+                    '50%': { 'background-position': '100% 50%' },
+                },
+            },
+            animation: {
+                'gradient-x': 'gradient-x 10s ease infinite',
             },
         },
     },

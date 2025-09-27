@@ -4,8 +4,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PublicPageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserDashboardController;
-use App\Http\Controllers\MemberPageController; // Perbaikan namespace
+use App\Http\Controllers\MemberPageController; 
+use App\Http\Controllers\PostController; 
 use App\Http\Controllers\Member\FinanceController;
+use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\DocumentController;
 
@@ -24,7 +26,10 @@ Route::get('/news', [PublicPageController::class, 'news'])
     ->name('news.index');
 Route::get('/news/{event}', [PublicPageController::class, 'newsDetail'])
     ->name('news.detail');
-
+Route::get('/blog', [PostController::class, 'index'])->name('blog.index');
+Route::get('/blog/{post:slug}', [PostController::class, 'show'])->name('blog.show');
+Route::get('/pendaftaran-anggota', [RegistrationController::class, 'create'])->name('register.member.create');
+Route::post('/pendaftaran-anggota', [RegistrationController::class, 'store'])->name('register.member.store');
 /*
 |--------------------------------------------------------------------------
 | Authentication Routes

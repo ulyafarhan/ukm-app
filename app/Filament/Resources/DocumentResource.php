@@ -9,25 +9,33 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+// --- TAMBAHKAN USE STATEMENTS DI BAWAH INI ---
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
 
 class DocumentResource extends Resource
 {
     protected static ?string $model = Document::class;
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-    protected static ?string $modelLabel = 'Dokumen';
-    protected static ?string $pluralModelLabel = 'Dokumen';
+
+    protected static ?string $navigationIcon = 'heroicon-o-document';
     protected static ?string $navigationGroup = 'Administrasi';
+    protected static ?string $label = 'Dokumen';
+
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')->label('Judul Dokumen')->required()->maxLength(255),
-                Forms\Components\Select::make('document_category_id')->label('Kategori')
+                Forms\Components\Select::make('document_category_id')
                     ->relationship('documentCategory', 'name')
                     ->required(),
-                Forms\Components\FileUpload::make('file_path')->label('File Dokumen')->required(),
-                Forms\Components\Textarea::make('description')->label('Deskripsi')->columnSpanFull(),
+                Forms\Components\TextInput::make('title')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\FileUpload::make('file_path')
+                    ->required(),
+                Forms\Components\Textarea::make('description')
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -35,9 +43,15 @@ class DocumentResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')->label('Judul')->searchable(),
-                Tables\Columns\TextColumn::make('documentCategory.name')->label('Kategori')->sortable(),
-                Tables\Columns\TextColumn::make('created_at')->label('Tanggal Upload')->dateTime()->sortable(),
+                Tables\Columns\TextColumn::make('documentCategory.name')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('title')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
@@ -45,10 +59,16 @@ class DocumentResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+            // --- UBAH HEADER ACTIONS MENJADI DROPDOWN ---
+            ->headerActions([
+                ActionGroup::make([
+                     Action::make('Generator Surat')
+                        ->icon('heroicon-o-document-plus')
+                        ->url(fn (): string => route('filament.admin.resources.documents.generator-surat')),
+                ])
+                ->button()
+                ->label('Aksi')
+                ->icon('heroicon-o-ellipsis-vertical'),
             ]);
     }
 
@@ -65,7 +85,7 @@ class DocumentResource extends Resource
             'index' => Pages\ListDocuments::route('/'),
             'create' => Pages\CreateDocument::route('/create'),
             'edit' => Pages\EditDocument::route('/{record}/edit'),
-            'generator' => Pages\GeneratorSurat::route('/generator'),
+            'generator-surat' => Pages\GeneratorSurat::route('/generator-surat'),
         ];
     }
 }

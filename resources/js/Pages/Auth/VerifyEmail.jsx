@@ -1,5 +1,5 @@
-import PrimaryButton from '@/Components/PrimaryButton';
 import GuestLayout from '@/Layouts/GuestLayout';
+import PrimaryButton from '@/Components/PrimaryButton';
 import { Head, Link, useForm } from '@inertiajs/react';
 
 export default function VerifyEmail({ status }) {
@@ -7,44 +7,42 @@ export default function VerifyEmail({ status }) {
 
     const submit = (e) => {
         e.preventDefault();
-
         post(route('verification.send'));
     };
 
     return (
         <GuestLayout>
-            <Head title="Email Verification" />
+            <Head title="Verifikasi Email" />
 
-            <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
-                Thanks for signing up! Before getting started, could you verify
-                your email address by clicking on the link we just emailed to
-                you? If you didn't receive the email, we will gladly send you
-                another.
+            <div className='text-center lg:text-left'>
+                <h1 className="text-3xl font-bold text-gray-800 mb-4">Verifikasi Alamat Email Anda</h1>
+
+                <div className="mb-4 text-sm text-gray-600">
+                    Terima kasih telah mendaftar! Sebelum memulai, bisakah Anda memverifikasi alamat email Anda dengan mengklik
+                    tautan yang baru saja kami kirimkan ke email Anda? Jika Anda tidak menerima email, kami akan dengan senang hati
+                    mengirimkan yang lain.
+                </div>
+
+                {status === 'verification-link-sent' && (
+                    <div className="mb-4 font-medium text-sm text-green-600">
+                        Tautan verifikasi baru telah dikirim ke alamat email yang Anda berikan saat pendaftaran.
+                    </div>
+                )}
+
+                <form onSubmit={submit}>
+                    <div className="mt-6 flex items-center justify-between">
+                        <PrimaryButton disabled={processing}>Kirim Ulang Email Verifikasi</PrimaryButton>
+                        <Link
+                            href={route('logout')}
+                            method="post"
+                            as="button"
+                            className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        >
+                            Log Out
+                        </Link>
+                    </div>
+                </form>
             </div>
-
-            {status === 'verification-link-sent' && (
-                <div className="mb-4 text-sm font-medium text-green-600 dark:text-green-400">
-                    A new verification link has been sent to the email address
-                    you provided during registration.
-                </div>
-            )}
-
-            <form onSubmit={submit}>
-                <div className="mt-4 flex items-center justify-between">
-                    <PrimaryButton disabled={processing}>
-                        Resend Verification Email
-                    </PrimaryButton>
-
-                    <Link
-                        href={route('logout')}
-                        method="post"
-                        as="button"
-                        className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
-                    >
-                        Log Out
-                    </Link>
-                </div>
-            </form>
         </GuestLayout>
     );
 }

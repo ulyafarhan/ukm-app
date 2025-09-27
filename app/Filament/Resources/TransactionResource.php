@@ -9,41 +9,42 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-
+// --- TAMBAHKAN USE STATEMENTS DI BAWAH INI ---
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
 
 class TransactionResource extends Resource
 {
     protected static ?string $model = Transaction::class;
+
     protected static ?string $navigationIcon = 'heroicon-o-banknotes';
-    protected static ?string $modelLabel = 'Transaksi Kas';
-    protected static ?string $pluralModelLabel = 'Transaksi Kas UKM';
-    protected static ?string $navigationGroup = 'Manajemen Keuangan';
-    protected static ?int $navigationSort = 1;
+    protected static ?string $navigationGroup = 'Keuangan';
+    protected static ?string $label = 'Transaksi';
+
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('transaction_category_id')->label('Kategori Transaksi')
+                Forms\Components\Select::make('transaction_category_id')
                     ->relationship('transactionCategory', 'name')
                     ->required(),
-                Forms\Components\TextInput::make('amount')->label('Jumlah Uang')
+                Forms\Components\TextInput::make('amount')
                     ->required()
                     ->numeric()
                     ->prefix('Rp'),
-                Forms\Components\DatePicker::make('transaction_date')->label('Tanggal Transaksi')
-                    ->required(),
-                Forms\Components\Radio::make('type')->label('Tipe')
+                Forms\Components\Radio::make('type')
                     ->options([
                         'income' => 'Pemasukan',
                         'expense' => 'Pengeluaran',
                     ])
                     ->required(),
-                Forms\Components\Textarea::make('description')->label('Deskripsi')
-                    ->columnSpanFull(),
-                Forms\Components\FileUpload::make('receipt_path')->label('Bukti Transaksi (Opsional)')
-                    ->directory('receipts')
+                Forms\Components\DatePicker::make('transaction_date')
+                    ->required(),
+                Forms\Components\FileUpload::make('receipt')
                     ->image()
+                    ->imageEditor(),
+                Forms\Components\Textarea::make('description')
                     ->columnSpanFull(),
             ]);
     }
@@ -52,16 +53,25 @@ class TransactionResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('transactionCategory.name')->label('Kategori')->sortable(),
-                Tables\Columns\TextColumn::make('amount')->label('Jumlah')->money('IDR')->sortable(),
-                Tables\Columns\TextColumn::make('transaction_date')->label('Tanggal')->date()->sortable(),
-                Tables\Columns\TextColumn::make('type')->label('Tipe')->badge()->color(fn (string $state): string => match ($state) {
-                    'income' => 'success',
-                    'expense' => 'danger',
-                })->formatStateUsing(fn (string $state): string => match ($state) {
-                    'income' => 'Pemasukan',
-                    'expense' => 'Pengeluaran',
-                }),
+                Tables\Columns\TextColumn::make('transactionCategory.name')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('amount')
+                    ->money('IDR')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('type')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'income' => 'success',
+                        'expense' => 'danger',
+                    }),
+                Tables\Columns\TextColumn::make('transaction_date')
+                    ->date()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
@@ -69,20 +79,34 @@ class TransactionResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+            // --- UBAH HEADER ACTIONS MENJADI DROPDOWN ---
+            ->headerActions([
+                ActionGroup::make([
+                    Action::make('Laporan')
+                        ->label('Laporan Keuangan')
+                        ->icon('heroicon-o-document-chart-bar')
+                        ->url(fn (): string => route('filament.admin.resources.transactions.laporan-transaksi')),
+                ])
+                ->button()
+                ->label('Aksi')
+                ->icon('heroicon-o-ellipsis-vertical'),
             ]);
     }
-    
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListTransactions::route('/'),
             'create' => Pages\CreateTransaction::route('/create'),
             'edit' => Pages\EditTransaction::route('/{record}/edit'),
-            'laporan' => Pages\LaporanTransaksi::route('/laporan'),
+            'laporan-transaksi' => Pages\LaporanTransaksi::route('/laporan-transaksi'),
         ];
-    }    
+    }
 }

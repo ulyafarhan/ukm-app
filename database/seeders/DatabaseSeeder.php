@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             DocumentSeeder::class,
             TransactionSeeder::class,
             KewirausahaanSeeder::class,
+            PostSeeder::class,
         ]);
     }
 }

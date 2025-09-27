@@ -1,15 +1,22 @@
-export default function PrimaryButton({ className = '', disabled, children, ...props }) {
+import { motion } from "framer-motion";
+
+export default function PrimaryButton({ children, className = '', ...props }) {
     return (
-        <button
-            {...props}
+        <motion.button
+            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 300 }}
             className={
-                `inline-flex items-center px-4 py-2 bg-teal-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-teal-600 focus:bg-teal-600 active:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition ease-in-out duration-150 ${
-                    disabled && 'opacity-25'
-                } ` + className
+                `relative overflow-hidden px-6 py-3 rounded-lg 
+                 bg-indigo-600 text-white font-semibold shadow-md
+                 hover:bg-indigo-700 focus:outline-none
+                 transition-all duration-300 ` + className
             }
-            disabled={disabled}
+            {...props}
         >
             {children}
-        </button>
+            {/* Ripple effect */}
+            <span className="absolute inset-0 bg-white/20 opacity-0 hover:opacity-100 transition-opacity duration-300" />
+        </motion.button>
     );
 }

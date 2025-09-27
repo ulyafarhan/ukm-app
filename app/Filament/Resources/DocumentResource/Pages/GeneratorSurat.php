@@ -3,13 +3,11 @@
 namespace App\Filament\Resources\DocumentResource\Pages;
 
 use App\Filament\Resources\DocumentResource;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Resources\Pages\Page;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
-use Filament\Resources\Pages\Page; // Pastikan ini benar
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class GeneratorSurat extends Page implements HasForms
 {
@@ -19,43 +17,69 @@ class GeneratorSurat extends Page implements HasForms
 
     protected static string $view = 'filament.resources.document-resource.pages.generator-surat';
 
-    protected static ?string $title = 'Generator Surat';
-    protected static ?string $navigationIcon = 'heroicon-o-document-plus';
-    protected static ?int $navigationSort = 3;
-
-    public ?array $data = [];
+    public $nomor_surat;
+    public $perihal;
+    public $penerima;
+    public $tujuan_surat;
+    public $isi_surat;
+    public $lampiran = '-'; 
+    public $jabatan;
+    public $penanggung_jawab;
 
     public function mount(): void
     {
         $this->form->fill();
     }
 
-    public function form(Form $form): Form
+    protected function getFormSchema(): array
     {
-        return $form
-            ->schema([
-                TextInput::make('nomor_surat')->label('Nomor Surat')->required(),
-                TextInput::make('perihal')->label('Perihal')->required(),
-                TextInput::make('lampiran')->label('Lampiran')->default('-'),
-                Textarea::make('isi_surat')->label('Isi Surat')->rows(6)->required()
-                    ->hint('Tulis isi utama surat di sini.'),
-                DatePicker::make('tanggal_surat')->label('Tanggal Surat')->default(now())->required(),
-                TextInput::make('penanggung_jawab')->label('Penanggung Jawab')->required(),
-                TextInput::make('jabatan')->label('Jabatan Penanggung Jawab')->required(),
-            ])
-            ->statePath('data');
+        return [
+            Forms\Components\Grid::make(2)
+                ->schema([
+                    Forms\Components\TextInput::make('nomor_surat')
+                        ->label('Nomor Surat')
+                        ->required(),
+                    Forms\Components\TextInput::make('lampiran')
+                        ->label('Lampiran')
+                        ->default('-')
+                        ->placeholder('Contoh: 1 Berkas'),
+                    Forms\Components\TextInput::make('perihal')
+                        ->label('Perihal')
+                        ->required()
+                        ->columnSpanFull(),
+                    Forms\Components\TextInput::make('penerima')
+                        ->label('Penerima Surat')
+                        ->required(),
+                    Forms\Components\TextInput::make('tujuan_surat')
+                        ->label('Tujuan / Tempat')
+                        ->placeholder('Contoh: Tempat')
+                        ->required(),
+                    Forms\Components\RichEditor::make('isi_surat')
+                        ->label('Isi Surat')
+                        ->required()
+                        ->columnSpanFull(),
+                    Forms\Components\TextInput::make('jabatan')
+                        ->label('Jabatan Penandatangan')
+                        ->placeholder('Contoh: Ketua Umum')
+                        ->required(),
+                    Forms\Components\TextInput::make('penanggung_jawab')
+                        ->label('Nama Penandatangan')
+                        ->placeholder('Contoh: nama lengkap dengan gelar')
+                        ->required(),
+                ])
+        ];
     }
 
     public function generateSurat()
     {
         $data = $this->form->getState();
 
-        $pdf = app('dompdf.wrapper');
-        $pdf->loadView('templates.surat-resmi', $data);
+        $data['tanggal_surat'] = now()->translatedFormat('d F Y');
 
-        return response()->streamDownload(
-            fn () => print($pdf->output()),
-            'Surat-' . str_replace('/', '_', $data['nomor_surat']) . '.pdf'
-        );
+        $pdf = Pdf::loadView('templates.surat-resmi', $data);
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->stream();
+        }, 'surat-resmi.pdf');
     }
 }
