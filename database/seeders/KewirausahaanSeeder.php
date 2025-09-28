@@ -2,26 +2,28 @@
 
 namespace Database\Seeders;
 
+use Illuminate\Database\Seeder;
 use App\Models\Product;
 use App\Models\Sale;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
+use App\Models\User;
 
 class KewirausahaanSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // 1. Hapus data lama (opsional, tapi bagus untuk testing)
-        Sale::query()->delete();
-        Product::query()->delete();
+        $user = User::first();
 
-        // 2. Buat 10 produk baru menggunakan factory
-        Product::factory(10)->create();
+        if (!$user) {
+            $this->command->info('Tidak ada user di database, KewirausahaanSeeder dilewati.');
+            return;
+        }
 
-        // 3. Buat 50 data penjualan berdasarkan produk yang ada
-        Sale::factory(50)->create();
+        Product::factory()->count(10)->create([
+            'user_id' => $user->id,
+        ]);
+
+        Sale::factory()->count(50)->create([
+            'user_id' => $user->id,
+        ]);
     }
 }

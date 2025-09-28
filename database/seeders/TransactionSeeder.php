@@ -2,27 +2,23 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\TransactionCategory;
 use App\Models\Transaction;
+use App\Models\User;
 
 class TransactionSeeder extends Seeder
 {
     public function run(): void
     {
-        $categories = [
-            ['name' => 'Iuran Kas Anggota'],
-            ['name' => 'Sponsorship'],
-            ['name' => 'Biaya Acara'],
-            ['name' => 'ATK'],
-            ['name' => 'Lain-lain'],
-        ];
+        $user = User::first();
 
-        foreach ($categories as $category) {
-            TransactionCategory::create($category);
+        if (!$user) {
+            $this->command->info('Tidak ada user di database, TransactionSeeder dilewati.');
+            return;
         }
         
-        Transaction::factory(50)->create();
+        Transaction::factory()->count(100)->create([
+            'user_id' => $user->id,
+        ]);
     }
 }

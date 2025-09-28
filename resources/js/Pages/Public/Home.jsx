@@ -71,8 +71,7 @@ export default function Home({ auth, events }) {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {events.map((event) => (
                             <div key={event.id} className="bg-white rounded-lg shadow-md overflow-hidden group transition-shadow duration-300 hover:shadow-xl">
-                                <Link href={route('news.detail', event.id)}>
-                                    <img
+                                <Link href={route('blog.detail', post.slug)}>                                    <img
                                         className="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-300"
                                         src={event.image_url || `https://placehold.co/600x400/0f766e/FFFFFF?text=UKM+Event`}
                                         alt={event.title}

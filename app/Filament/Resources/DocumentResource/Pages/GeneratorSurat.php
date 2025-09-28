@@ -4,82 +4,81 @@ namespace App\Filament\Resources\DocumentResource\Pages;
 
 use App\Filament\Resources\DocumentResource;
 use Filament\Resources\Pages\Page;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms;
-use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Member;
+use Illuminate\Support\Facades\Blade;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\PhpWord;
 
-class GeneratorSurat extends Page implements HasForms
+class GeneratorSurat extends Page
 {
-    use InteractsWithForms;
-
     protected static string $resource = DocumentResource::class;
-
     protected static string $view = 'filament.resources.document-resource.pages.generator-surat';
 
-    public $nomor_surat;
-    public $perihal;
-    public $penerima;
-    public $tujuan_surat;
-    public $isi_surat;
-    public $lampiran = '-'; 
-    public $jabatan;
-    public $penanggung_jawab;
+    public $members;
+    public $data = [
+        'member_id' => null,
+        'nomor_surat' => '',
+        'perihal' => '',
+        'lampiran' => '',
+    ];
 
-    public function mount(): void
-    {
-        $this->form->fill();
-    }
-
-    protected function getFormSchema(): array
+    protected function rules(): array
     {
         return [
-            Forms\Components\Grid::make(2)
-                ->schema([
-                    Forms\Components\TextInput::make('nomor_surat')
-                        ->label('Nomor Surat')
-                        ->required(),
-                    Forms\Components\TextInput::make('lampiran')
-                        ->label('Lampiran')
-                        ->default('-')
-                        ->placeholder('Contoh: 1 Berkas'),
-                    Forms\Components\TextInput::make('perihal')
-                        ->label('Perihal')
-                        ->required()
-                        ->columnSpanFull(),
-                    Forms\Components\TextInput::make('penerima')
-                        ->label('Penerima Surat')
-                        ->required(),
-                    Forms\Components\TextInput::make('tujuan_surat')
-                        ->label('Tujuan / Tempat')
-                        ->placeholder('Contoh: Tempat')
-                        ->required(),
-                    Forms\Components\RichEditor::make('isi_surat')
-                        ->label('Isi Surat')
-                        ->required()
-                        ->columnSpanFull(),
-                    Forms\Components\TextInput::make('jabatan')
-                        ->label('Jabatan Penandatangan')
-                        ->placeholder('Contoh: Ketua Umum')
-                        ->required(),
-                    Forms\Components\TextInput::make('penanggung_jawab')
-                        ->label('Nama Penandatangan')
-                        ->placeholder('Contoh: nama lengkap dengan gelar')
-                        ->required(),
-                ])
+            'data.member_id' => 'required|exists:members,id',
+            'data.nomor_surat' => 'required|string|max:255',
+            'data.perihal' => 'required|string|max:255',
         ];
     }
 
-    public function generateSurat()
+    protected function getMessages(): array
     {
-        $data = $this->form->getState();
+        return [
+            'data.member_id.required' => 'Anggota wajib dipilih.',
+            'data.nomor_surat.required' => 'Nomor surat wajib diisi.',
+            'data.perihal.required' => 'Perihal wajib diisi.',
+        ];
+    }
 
-        $data['tanggal_surat'] = now()->translatedFormat('d F Y');
 
-        $pdf = Pdf::loadView('templates.surat-resmi', $data);
+    public function mount(): void
+    {
+        $this->members = Member::all();
+    }
 
-        return response()->streamDownload(function () use ($pdf) {
-            echo $pdf->stream();
-        }, 'surat-resmi.pdf');
+    public function generate()
+    {
+        $this->validate();
+
+        $member = Member::find($this->data['member_id']);
+
+        $data = [
+            'nama' => $member->nama,
+            'nim' => $member->nim,
+            'prodi' => $member->prodi,
+            'nomor_surat' => $this->data['nomor_surat'],
+            'perihal' => $this->data['perihal'],
+            'lampiran' => $this->data['lampiran'] ?? '-',
+            'tanggal' => now()->translatedFormat('d F Y'),
+        ];
+        
+        $content = Blade::render(file_get_contents(resource_path('views/templates/surat-resmi.blade.php')), $data);
+        
+        $phpWord = new PhpWord();
+        $section = $phpWord->addSection();
+        \PhpOffice\PhpWord\Shared\Html::addHtml($section, $content, false, false);
+        
+        $filename = 'surat_' . str_replace(' ', '_', $member->nama) . '.docx';
+
+        $headers = [
+            "Content-Type" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "Content-Disposition" => "attachment; filename={$filename}",
+        ];
+
+        return response()->streamDownload(function() use ($phpWord) {
+            $objWriter = IOFactory::createWriter($phpWord, 'Word2007');
+            $objWriter->save('php://output');
+        }, $filename, $headers);
     }
 }
