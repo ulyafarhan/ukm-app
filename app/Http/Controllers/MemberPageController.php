@@ -1,12 +1,9 @@
 <?php
 
-// Namespace ini sudah benar sesuai struktur awal Anda
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Inertia\Inertia;
-// Tambahkan baris ini untuk memanggil Controller utama
-use App\Http\Controllers\Controller;
+use App\Models\Member;
 
 class MemberPageController extends Controller
 {
@@ -15,8 +12,9 @@ class MemberPageController extends Controller
      */
     public function dashboard()
     {
-        // Pastikan nama komponen React/Vue Anda adalah 'member/Dashboard'
-        return Inertia::render('member/Dashboard');
+        // TODO: Tambahkan data agregat untuk dashboard anggota jika diperlukan.
+        // Contoh: jumlah acara mendatang, saldo kas terakhir, dll.
+        return Inertia::render('member/dashboard');
     }
 
     /**
@@ -24,7 +22,16 @@ class MemberPageController extends Controller
      */
     public function index()
     {
-        // Pastikan nama komponen React/Vue Anda adalah 'member/members/Index'
-        return Inertia::render('member/members/Index');
+        // Ambil data anggota dari database, urutkan berdasarkan nama.
+        // Gunakan paginasi agar halaman tidak lambat saat data banyak.
+        $members = Member::orderBy('name')->paginate(20)->through(fn ($member) => [
+            'id' => $member->id,
+            'student_id' => $member->student_id,
+            'name' => $member->name,
+            'major' => $member->major,
+            'entry_year' => $member->entry_year,
+        ]);
+
+        return Inertia::render('member/members/index', ['members' => $members]);
     }
 }

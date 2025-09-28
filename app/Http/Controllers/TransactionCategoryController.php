@@ -1,23 +1,12 @@
 <?php
-namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+namespace App\Http\Controllers;
 
-class TransactionCategory extends Model
+use App\Models\TransactionCategory;
+use Illuminate\Http\Request;
+
+class TransactionCategoryController extends Controller
 {
-    use HasFactory;
-
-    // Kolom yang boleh diisi secara massal
-    protected $fillable = [
-        'name',
-        'description',
-    ];
-
-    // Satu kategori memiliki banyak transaksi
-    public function transactions(): HasMany
-    {
-        return $this->hasMany(Transaction::class);
-    }
+    // Biarkan kosong untuk saat ini,
+    // kita hanya butuh file ini ada di tempat yang benar.
 }
