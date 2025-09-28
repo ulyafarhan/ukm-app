@@ -2,36 +2,34 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Inertia\Inertia;
-use App\Models\Member;
+use Illuminate\Http\Request;
 
 class MemberPageController extends Controller
 {
-    /**
-     * Menampilkan dashboard utama untuk anggota.
-     */
     public function dashboard()
     {
-        // TODO: Tambahkan data agregat untuk dashboard anggota jika diperlukan.
-        // Contoh: jumlah acara mendatang, saldo kas terakhir, dll.
+        // Gunakan huruf kecil untuk menghindari masalah case-sensitivity
         return Inertia::render('member/dashboard');
     }
 
-    /**
-     * Menampilkan daftar anggota.
-     */
     public function index()
     {
-        // Ambil data anggota dari database, urutkan berdasarkan nama.
-        // Gunakan paginasi agar halaman tidak lambat saat data banyak.
-        $members = Member::orderBy('name')->paginate(20)->through(fn ($member) => [
-            'id' => $member->id,
-            'student_id' => $member->student_id,
-            'name' => $member->name,
-            'major' => $member->major,
-            'entry_year' => $member->entry_year,
-        ]);
+        $members = User::whereHas('roles', function ($query) {
+            $query->where('name', 'member');
+        })
+            ->latest()
+            ->paginate(10)
+            ->through(fn ($member) => [
+                'id' => $member->id,
+                'name' => $member->name,
+                'email' => $member->email,
+                'joined_at' => $member->created_at->diffForHumans(),
+            ]);
 
-        return Inertia::render('member/members/index', ['members' => $members]);
+        return Inertia::render('member/members/index', [
+            'members' => $members,
+        ]);
     }
 }

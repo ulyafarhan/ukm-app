@@ -19,10 +19,8 @@ export default function Home({ auth, events }) {
                 backgroundImage: `url(${HeroImage})`,
             }}
             >
-            {/* dark overlay */}
             <div className="absolute inset-0 bg-black/60"></div>
 
-            {/* content */}
             <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8">
                 <h1 className="text-4xl md:text-6xl font-extrabold mb-4 leading-tight drop-shadow-lg">
                 Membangun Potensi, Meraih Prestasi
@@ -71,7 +69,8 @@ export default function Home({ auth, events }) {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {events.map((event) => (
                             <div key={event.id} className="bg-white rounded-lg shadow-md overflow-hidden group transition-shadow duration-300 hover:shadow-xl">
-                                <Link href={route('blog.detail', post.slug)}>                                    <img
+                                <Link href={route('news.detail', event.id)}>
+                                    <img
                                         className="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-300"
                                         src={event.image_url || `https://placehold.co/600x400/0f766e/FFFFFF?text=UKM+Event`}
                                         alt={event.title}
