@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\Transaction;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
@@ -19,31 +18,20 @@ class MemberPageController extends Controller
             ->take(3)
             ->get(['id', 'title', 'start_date', 'location']);
 
-        $latestTransactions = Transaction::where('user_id', $user->id)
-            ->latest()
-            ->take(5)
-            ->get(['id', 'description', 'amount', 'type', 'transaction_date']);
-
         $duesStatus = Transaction::where('user_id', $user->id)
-            ->where('transaction_category_id', 1) 
+            ->where('transaction_category_id', 1) // Asumsi ID 1 adalah "Iuran Wajib"
             ->whereYear('transaction_date', now()->year)
             ->whereMonth('transaction_date', now()->month)
             ->exists();
 
-        $stats = [
-            'membershipStatus' => 'Aktif',
-            'eventsAttended' => 0, 
-            'activityPoints' => 0, 
-            'duesStatus' => $duesStatus ? 'Lunas' : 'Belum Lunas',
-        ];
-
-
         return Inertia::render('member/dashboard', [
-            'dashboardData' => [
-                'stats' => $stats,
-                'upcomingEvents' => $upcomingEvents,
-                'latestTransactions' => $latestTransactions,
-            ]
+            'stats' => [
+                'membershipStatus' => 'Aktif',
+                'duesStatus' => $duesStatus ? 'Lunas' : 'Belum Lunas',
+                'eventsAttended' => 0, // Logika presensi belum ada
+                'activityPoints' => 0, // Logika poin belum ada
+            ],
+            'upcomingEvents' => $upcomingEvents,
         ]);
     }
 

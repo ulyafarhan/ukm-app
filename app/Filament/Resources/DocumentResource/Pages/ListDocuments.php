@@ -13,6 +13,11 @@ class ListDocuments extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('generatorSurat')
+                ->label('Buat Surat Resmi')
+                ->url(GeneratorSurat::getUrl())
+                ->icon('heroicon-o-document-plus'),
+
             Actions\CreateAction::make(),
         ];
     }

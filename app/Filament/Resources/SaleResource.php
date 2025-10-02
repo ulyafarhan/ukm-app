@@ -60,5 +60,10 @@ class SaleResource extends Resource
             'create' => Pages\CreateSale::route('/create'),
             'edit' => Pages\EditSale::route('/{record}/edit'),
         ];
-    }    
+    } 
+    
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->hasRole('admin');
+    }
 }

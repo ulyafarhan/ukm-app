@@ -13,6 +13,11 @@ class ListTransactions extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('laporanKeuangan')
+                ->label('Cetak Laporan')
+                ->url(LaporanTransaksi::getUrl())
+                ->icon('heroicon-o-printer'),
+
             Actions\CreateAction::make(),
         ];
     }

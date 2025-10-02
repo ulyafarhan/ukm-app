@@ -1,105 +1,61 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PublicPageController;
-use App\Http\Controllers\PostController;
-use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PublicPageController;
 use App\Http\Controllers\MemberPageController;
-use App\Http\Controllers\Member\FinanceController;
-use App\Http\Controllers\EventController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\Member\FinanceController;
+use App\Http\Controllers\PostController;
 
 /*
 |--------------------------------------------------------------------------
-| Public Routes (semua pengunjung)
+| Rute Publik (Untuk semua pengunjung)
 |--------------------------------------------------------------------------
 */
-Route::get('/', [PublicPageController::class, 'home'])
-    ->name('home');
+Route::controller(PublicPageController::class)->group(function () {
+    Route::get('/', 'home')->name('home');
+    Route::get('/berita', 'newsIndex')->name('news.index');
+    Route::get('/berita/{post:slug}', 'newsDetail')->name('news.detail');
+});
 
-Route::get('/news', [PublicPageController::class, 'news'])
-    ->name('news.index');
+Route::controller(PostController::class)->group(function () {
+    Route::get('/blog', 'index')->name('blog.index');
+    Route::get('/blog/{post:slug}', 'show')->name('blog.show');
+});
 
-Route::get('/news/{event}', [PublicPageController::class, 'newsDetail'])
-    ->name('news.detail');
-
-Route::get('/blog', [PostController::class, 'index'])
-    ->name('blog.index');
-
-Route::get('/blog/{post:slug}', [PostController::class, 'show'])
-    ->name('blog.show');
-
-Route::get('/pendaftaran-anggota', [RegistrationController::class, 'create'])
-    ->name('register.member.create');
-
-Route::post('/pendaftaran-anggota', [RegistrationController::class, 'store'])
-    ->name('register.member.store');
+Route::controller(RegistrationController::class)->group(function () {
+    Route::get('/pendaftaran', 'create')->name('register.member');
+    Route::post('/pendaftaran', 'store')->name('register.member.store');
+});
 
 /*
 |--------------------------------------------------------------------------
-| Authentication Routes (Laravel Breeze / Fortify)
+| Rute Autentikasi
 |--------------------------------------------------------------------------
 */
 require __DIR__ . '/auth.php';
 
 /*
 |--------------------------------------------------------------------------
-| Dashboard Redirect
-|--------------------------------------------------------------------------
-| Setelah login & verifikasi, langsung ke /member/dashboard
+| Rute Pengguna Terautentikasi
 |--------------------------------------------------------------------------
 */
-Route::get('/dashboard', function () {
-    return redirect()->route('member.dashboard');
-})->middleware(['auth', 'verified'])
-  ->name('dashboard');
+Route::middleware(['auth', 'verified'])->group(function () {
 
-/*
-|--------------------------------------------------------------------------
-| Profile Management (hanya login)
-|--------------------------------------------------------------------------
-*/
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])
-        ->name('profile.edit');
+    Route::get('/dashboard', fn() => redirect('/admin'))->name('dashboard');
+    Route::controller(ProfileController::class)->prefix('profile')->name('profile.')->group(function () {
+        Route::get('/', 'edit')->name('edit');
+        Route::patch('/', 'update')->name('update');
+        Route::delete('/', 'destroy')->name('destroy');
+    });
 
-    Route::patch('/profile', [ProfileController::class, 'update'])
-        ->name('profile.update');
-
-    Route::delete('/profile', [ProfileController::class, 'destroy'])
-        ->name('profile.destroy');
-});
-
-/*
-|--------------------------------------------------------------------------
-| Member Area (hanya login & verified)
-|--------------------------------------------------------------------------
-| Semua URL diprefiks dengan /member
-|--------------------------------------------------------------------------
-*/
-Route::middleware(['auth', 'verified'])
-     ->prefix('member')
-     ->name('member.')
-     ->group(function () {
-
-    // Dashboard utama member
-    Route::get('/dashboard', [MemberPageController::class, 'dashboard'])
-        ->name('dashboard');
-
-    // Daftar anggota
-    Route::get('/anggota', [MemberPageController::class, 'index'])
-        ->name('anggota.index');
-
-    // Modul keuangan
-    Route::get('/keuangan', [FinanceController::class, 'index'])
-        ->name('keuangan.index');
-
-    // Modul kalender kegiatan
-    Route::get('/kegiatan', [EventController::class, 'index'])
-        ->name('kegiatan.index');
-
-    // Modul repositori dokumen
-    Route::get('/dokumen', [DocumentController::class, 'index'])
-        ->name('dokumen.index');
+    Route::prefix('member')->name('member.')->group(function () {
+        Route::get('/dashboard', [MemberPageController::class, 'dashboard'])->name('dashboard');
+        Route::get('/anggota', [MemberPageController::class, 'memberIndex'])->name('anggota.index');
+        Route::get('/keuangan', [FinanceController::class, 'index'])->name('keuangan.index');
+        Route::get('/kegiatan', [EventController::class, 'index'])->name('kegiatan.index');
+        Route::get('/dokumen', [DocumentController::class, 'index'])->name('dokumen.index');
+    });
 });

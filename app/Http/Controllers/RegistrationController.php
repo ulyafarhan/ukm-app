@@ -12,7 +12,7 @@ class RegistrationController extends Controller
 {
     public function create()
     {
-        $activePeriod = RegistrationPeriod::where('is_active', true)
+        $activePeriod = RegistrationPeriod::where('status', 'active')
             ->where('start_date', '<=', Carbon::now())
             ->where('end_date', '>=', Carbon::now())
             ->first();
@@ -25,28 +25,24 @@ class RegistrationController extends Controller
 
     public function store(Request $request)
     {
-        $activePeriod = RegistrationPeriod::where('is_active', true)
+        $activePeriod = RegistrationPeriod::where('status', 'active')
             ->where('start_date', '<=', Carbon::now())
             ->where('end_date', '>=', Carbon::now())
-            ->first();
-
-        if (!$activePeriod) {
-            return back()->with('error', 'Pendaftaran saat ini sedang ditutup.');
-        }
+            ->firstOrFail();
 
         $validated = $request->validate([
             'full_name' => 'required|string|max:255',
-            'nim' => 'required|string|max:20|unique:registrations',
+            'nim' => 'required|string|max:20|unique:registrations,nim,NULL,id,registration_period_id,'.$activePeriod->id,
             'faculty' => 'required|string|max:255',
             'department' => 'required|string|max:255',
-            'year_in' => 'required|integer|min:2000',
-            'phone_number' => 'required|string|max:20',
-            'email' => 'required|email|max:255|unique:registrations',
-            'reason' => 'required|string',
+            'year_in' => 'required|digits:4|integer|min:1990',
+            'phone_number' => 'required|string|max:15',
+            'email' => 'required|string|email|max:255|unique:registrations,email,NULL,id,registration_period_id,'.$activePeriod->id,
+            'reason' => 'nullable|string|max:2000',
         ]);
 
-        Registration::create($validated);
+        $activePeriod->registrations()->create($validated);
 
-        return redirect()->route('register.member.create')->with('success', 'Pendaftaran berhasil! Terima kasih telah mendaftar.');
+        return to_route('register.member')->with('success', 'Pendaftaran Anda berhasil dikirim!');
     }
 }

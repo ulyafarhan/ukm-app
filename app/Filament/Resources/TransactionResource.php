@@ -18,7 +18,7 @@ class TransactionResource extends Resource
     protected static ?string $model = Transaction::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-banknotes';
-    protected static ?string $navigationGroup = 'Keuangan';
+    protected static ?string $navigationGroup = 'Manajemen Keuangan';
     protected static ?string $label = 'Transaksi';
 
 
@@ -106,7 +106,12 @@ class TransactionResource extends Resource
             'index' => Pages\ListTransactions::route('/'),
             'create' => Pages\CreateTransaction::route('/create'),
             'edit' => Pages\EditTransaction::route('/{record}/edit'),
-            'laporan-transaksi' => Pages\LaporanTransaksi::route('/laporan-transaksi'),
+            'report' => Pages\LaporanTransaksi::route('/laporan'), // Daftarkan halaman laporan
         ];
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->hasRole('admin');
     }
 }

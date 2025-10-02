@@ -20,7 +20,6 @@ class UserResource extends Resource
     protected static ?string $navigationGroup = 'Administrasi';
     protected static ?int $navigationSort = 1;
 
-
     public static function form(Form $form): Form
     {
         return $form
@@ -28,22 +27,25 @@ class UserResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->label('Nama')
                     ->required(),
+
                 Forms\Components\TextInput::make('email')
                     ->label('Email')
                     ->email()
                     ->required(),
+
                 Forms\Components\TextInput::make('password')
                     ->label('Password')
                     ->password()
                     ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                     ->dehydrated(fn ($state) => filled($state))
                     ->required(fn (string $context): bool => $context === 'create'),
+
                 Forms\Components\Select::make('roles')
                     ->label('Peran (Role)')
                     ->relationship('roles', 'name')
                     ->multiple()
                     ->preload()
-                    ->searchable()
+                    ->searchable(),
             ]);
     }
 
@@ -51,10 +53,22 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->label('Nama')->searchable(),
-                Tables\Columns\TextColumn::make('email')->label('Email')->searchable(),
-                Tables\Columns\TextColumn::make('roles.name')->label('Peran')->badge(),
-                Tables\Columns\TextColumn::make('created_at')->label('Dibuat Pada')->dateTime()->sortable(),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Nama')
+                    ->searchable(),
+
+                Tables\Columns\TextColumn::make('email')
+                    ->label('Email')
+                    ->searchable(),
+
+                Tables\Columns\TextColumn::make('roles.name')
+                    ->label('Peran')
+                    ->badge(),
+
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Dibuat Pada')
+                    ->dateTime()
+                    ->sortable(),
             ])
             ->filters([
                 //
@@ -72,27 +86,14 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUsers::route('/'),
+            'index'  => Pages\ListUsers::route('/'),
             'create' => Pages\CreateUser::route('/create'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
+            'edit'   => Pages\EditUser::route('/{record}/edit'),
         ];
     }   
     
     public static function canViewAny(): bool
     {
-        // Cek hak akses: return true jika user adalah 'admin'
         return auth()->user()->hasRole('admin');
     }
-
-    public function getDefaultUrl(): string
-    {
-        $user = auth()->user();
-
-        if ($user?->hasRole('member')) {
-            return MemberDashboard::getUrl();
-        }
-
-        return Dashboard::getUrl();
-    }
 }
-

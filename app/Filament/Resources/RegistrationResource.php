@@ -89,4 +89,9 @@ class RegistrationResource extends Resource
             'edit' => Pages\EditRegistration::route('/{record}/edit'),
         ];
     }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->hasRole('admin');
+    }
 }

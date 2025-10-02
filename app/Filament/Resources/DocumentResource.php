@@ -85,7 +85,12 @@ class DocumentResource extends Resource
             'index' => Pages\ListDocuments::route('/'),
             'create' => Pages\CreateDocument::route('/create'),
             'edit' => Pages\EditDocument::route('/{record}/edit'),
-            'generator-surat' => Pages\GeneratorSurat::route('/generator-surat'),
+            'generate' => Pages\GeneratorSurat::route('/generator'), 
         ];
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->hasRole('admin');
     }
 }

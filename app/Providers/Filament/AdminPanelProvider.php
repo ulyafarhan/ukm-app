@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\MemberDashboard;
 use App\Filament\Widgets\LatestMembers;
 use App\Filament\Widgets\StatsOverview;
 use App\Filament\Widgets\TransactionChart;
@@ -13,7 +14,6 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Http\Middleware\AuthenticateSession;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -33,22 +33,18 @@ class AdminPanelProvider extends PanelProvider
             ->brandName('UKM PTQ UNIMAL')
             ->brandLogo(asset('images/logo-ptq.svg'))
             ->brandLogoHeight('40px')
-            ->favicon(asset('images/favicon.png'))
+            ->favicon(asset('images/logo-ptq.svg'))
             ->darkMode(false)
-            ->spa()
             ->colors([
                 'primary' => Color::Amber,
             ])
-            ->navigationGroups([
-                NavigationGroup::make()->label('Manajemen Anggota'),
-                NavigationGroup::make()->label('Manajemen Keuangan'),
-                NavigationGroup::make()->label('Manajemen Kegiatan'),
-                NavigationGroup::make()->label('Administrasi'),
-            ])
+            
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                auth()->user()?->hasRole('member')
+                    ? MemberDashboard::class
+                    : Pages\Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
@@ -60,7 +56,6 @@ class AdminPanelProvider extends PanelProvider
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
                 StartSession::class,
-                AuthenticateSession::class,
                 ShareErrorsFromSession::class,
                 VerifyCsrfToken::class,
                 SubstituteBindings::class,
