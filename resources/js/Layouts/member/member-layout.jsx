@@ -1,141 +1,128 @@
 import { useState } from 'react';
 import { Link } from '@inertiajs/react';
+import { Bell, Home, Users, DollarSign, Calendar, FileText, Menu, Package2, User as UserIcon } from 'lucide-react';
+
+import { Button } from "@/Components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/Components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/Components/ui/dropdown-menu";
+import { Sheet, SheetContent, SheetTrigger } from "@/Components/ui/sheet";
 import ApplicationLogo from '@/Components/ApplicationLogo';
-import NavLink from '@/Components/NavLink';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
-import Dropdown from '@/Components/Dropdown';
 
 export default function MemberLayout({ user, header, children }) {
-    const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
-
-    // Daftar menu navigasi untuk member area
     const navigationMenu = [
-        { name: 'Dashboard', routeName: 'member.dashboard', current: route().current('member.dashboard') },
-        { name: 'Keuangan', routeName: 'member.keuangan.index', current: route().current('member.keuangan.index') },
-        { name: 'Kegiatan', routeName: 'member.kegiatan.index', current: route().current('member.kegiatan.index') },
-        { name: 'Dokumen', routeName: 'member.dokumen.index', current: route().current('member.dokumen.index') },
-        { name: 'Anggota', routeName: 'member.anggota.index', current: route().current('member.anggota.index') },
+        { name: 'Dashboard', route: 'member.dashboard', icon: Home },
+        { name: 'Keuangan', route: 'member.keuangan.index', icon: DollarSign },
+        { name: 'Kegiatan', route: 'member.kegiatan.index', icon: Calendar },
+        { name: 'Dokumen', route: 'member.dokumen.index', icon: FileText },
+        { name: 'Anggota', route: 'member.anggota.index', icon: Users },
     ];
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <nav className="bg-white border-b border-gray-100">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between h-16">
-                        <div className="flex">
-                            <div className="shrink-0 flex items-center">
-                                <Link href={route('home')}>
-                                    <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
+        <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+            <div className="hidden border-r bg-muted/40 md:block">
+                <div className="flex h-full max-h-screen flex-col gap-2">
+                    <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
+                        <Link href={route('home')} className="flex items-center gap-2 font-semibold">
+                            <ApplicationLogo className="h-8 w-auto" />
+                            <span className="">UKM Digital</span>
+                        </Link>
+                    </div>
+                    <div className="flex-1">
+                        <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
+                            {navigationMenu.map((item) => (
+                                <Link
+                                    key={item.name}
+                                    href={route(item.route)}
+                                    className={`flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${route().current(item.route) ? 'bg-muted text-primary' : ''}`}
+                                >
+                                    <item.icon className="h-4 w-4" />
+                                    {item.name}
                                 </Link>
-                            </div>
-                            {/* Navigation Links */}
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                {navigationMenu.map((item) => (
-                                    <NavLink key={item.name} href={route(item.routeName)} active={item.current}>
-                                        {item.name}
-                                    </NavLink>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Settings Dropdown */}
-                        <div className="hidden sm:flex sm:items-center sm:ms-6">
-                            <div className="ms-3 relative">
-                                <Dropdown>
-                                    <Dropdown.Trigger>
-                                        <span className="inline-flex rounded-md">
-                                            <button
-                                                type="button"
-                                                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
-                                            >
-                                                {user.name}
-                                                <svg
-                                                    className="ms-2 -me-0.5 h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20"
-                                                    fill="currentColor"
-                                                >
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        clipRule="evenodd"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </Dropdown.Trigger>
-
-                                    <Dropdown.Content>
-                                        <Dropdown.Link href={route('profile.edit')}>Profil</Dropdown.Link>
-                                        <Dropdown.Link href={route('logout')} method="post" as="button">
-                                            Keluar
-                                        </Dropdown.Link>
-                                    </Dropdown.Content>
-                                </Dropdown>
-                            </div>
-                        </div>
-                        
-                        {/* Hamburger */}
-                        <div className="-me-2 flex items-center sm:hidden">
-                            <button
-                                onClick={() => setShowingNavigationDropdown((previousState) => !previousState)}
-                                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
+                            ))}
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <div className="flex flex-col">
+                <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+                    <Sheet>
+                        <SheetTrigger asChild>
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                className="shrink-0 md:hidden"
                             >
-                                <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                    <path
-                                        className={!showingNavigationDropdown ? 'inline-flex' : 'hidden'}
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                    <path
-                                        className={showingNavigationDropdown ? 'inline-flex' : 'hidden'}
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
-                            </button>
-                        </div>
+                                <Menu className="h-5 w-5" />
+                                <span className="sr-only">Toggle navigation menu</span>
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent side="left" className="flex flex-col">
+                            <nav className="grid gap-2 text-lg font-medium">
+                                <Link
+                                    href={route('home')}
+                                    className="flex items-center gap-2 text-lg font-semibold mb-4"
+                                >
+                                    <ApplicationLogo className="h-8 w-auto" />
+                                    <span className="sr-only">UKM Digital</span>
+                                </Link>
+                                {navigationMenu.map((item) => (
+                                    <Link
+                                        key={item.name}
+                                        href={route(item.route)}
+                                        className={`mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground ${route().current(item.route) ? 'bg-muted text-foreground' : ''}`}
+                                    >
+                                        <item.icon className="h-5 w-5" />
+                                        {item.name}
+                                    </Link>
+                                ))}
+                            </nav>
+                        </SheetContent>
+                    </Sheet>
+                    <div className="w-full flex-1">
+                       {header && <h1 className="text-lg font-semibold">{header}</h1>}
                     </div>
-                </div>
-
-                {/* Responsive Navigation Menu */}
-                <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden'}>
-                    <div className="pt-2 pb-3 space-y-1">
-                        {navigationMenu.map((item) => (
-                            <ResponsiveNavLink key={item.name} href={route(item.routeName)} active={item.current}>
-                                {item.name}
-                            </ResponsiveNavLink>
-                        ))}
-                    </div>
-                    
-                    {/* Responsive Settings Options */}
-                    <div className="pt-4 pb-1 border-t border-gray-200">
-                        <div className="px-4">
-                            <div className="font-medium text-base text-gray-800">{user.name}</div>
-                            <div className="font-medium text-sm text-gray-500">{user.email}</div>
-                        </div>
-
-                        <div className="mt-3 space-y-1">
-                            <ResponsiveNavLink href={route('profile.edit')}>Profil</ResponsiveNavLink>
-                            <ResponsiveNavLink method="post" href={route('logout')} as="button">
-                                Keluar
-                            </ResponsiveNavLink>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-
-            {header && (
-                <header className="bg-white shadow">
-                    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">{header}</div>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="secondary" size="icon" className="rounded-full">
+                                <UserIcon className="h-5 w-5" />
+                                <span className="sr-only">Toggle user menu</span>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>{user.name}</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem asChild>
+                                <Link href={route('profile.edit')}>Profil Saya</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                                <Link href="#">Bantuan</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                             <DropdownMenuItem asChild>
+                                <Link href={route('logout')} method="post" as="button" className="w-full text-left">
+                                    Keluar
+                                </Link>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </header>
-            )}
-
-            <main>{children}</main>
+                <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-gray-50">
+                    {children}
+                </main>
+            </div>
         </div>
     );
 }
