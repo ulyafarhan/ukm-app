@@ -6,6 +6,7 @@ import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
 
+
 export default function RegisterMember({ isOpen, periodName, jetstream }) {
     const { data, setData, post, processing, errors, recentlySuccessful } = useForm({
         full_name: '',

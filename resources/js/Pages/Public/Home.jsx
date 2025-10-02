@@ -2,6 +2,7 @@ import PublicLayout from './PublicLayout';
 import { Head, Link } from '@inertiajs/react';
 import HeroImage from '../../../../public/images/hero-background.jpg';
 
+
 export default function Home({ auth, events }) {
 
     const formatDate = (dateString) => {
