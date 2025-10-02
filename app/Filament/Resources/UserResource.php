@@ -76,5 +76,23 @@ class UserResource extends Resource
             'create' => Pages\CreateUser::route('/create'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
-    }    
+    }   
+    
+    public static function canViewAny(): bool
+    {
+        // Cek hak akses: return true jika user adalah 'admin'
+        return auth()->user()->hasRole('admin');
+    }
+
+    public function getDefaultUrl(): string
+    {
+        $user = auth()->user();
+
+        if ($user?->hasRole('member')) {
+            return MemberDashboard::getUrl();
+        }
+
+        return Dashboard::getUrl();
+    }
 }
+

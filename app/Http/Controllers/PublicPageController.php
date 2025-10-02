@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Registration;
 
-
 class PublicPageController extends Controller
 {
     public function home()

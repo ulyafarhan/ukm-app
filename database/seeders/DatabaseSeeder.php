@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
             MemberSeeder::class,
             EventSeeder::class,
             DocumentSeeder::class,
+            TransactionCategorySeeder::class, 
             TransactionSeeder::class,
             KewirausahaanSeeder::class,
             PostSeeder::class,

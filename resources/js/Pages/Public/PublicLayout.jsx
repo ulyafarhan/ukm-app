@@ -16,7 +16,6 @@ export default function PublicLayout({ children, auth }) {
 
                         <nav className="hidden md:flex items-center space-x-8">
                             <Link href={route('home')} className="font-semibold text-gray-600 hover:text-teal-600 transition duration-300">Beranda</Link>
-                            <Link href={route('news.index')} className="font-semibold text-gray-600 hover:text-teal-600 transition duration-300">Berita</Link>
                             <Link href={route('blog.index')} className="font-semibold text-gray-600 hover:text-teal-600 transition duration-300">Blog</Link>
                             <Link href={route('register.member.create')} className="font-semibold text-gray-600 hover:text-teal-600 transition duration-300">Pendaftaran</Link>
                             <a href="#tentang-kami" className="font-semibold text-gray-600 hover:text-teal-600 transition duration-300">Tentang Kami</a>

@@ -3,7 +3,7 @@ import { Head, Link } from '@inertiajs/react';
 import HeroImage from '../../../../public/images/hero-background.jpg';
 
 
-export default function Home({ auth, events }) {
+export default function Home({ auth, posts }) {
 
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -42,21 +42,7 @@ export default function Home({ auth, events }) {
                         </p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div className="bg-gray-50 p-8 rounded-lg text-center shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                            <div className="flex items-center justify-center h-16 w-16 bg-teal-100 text-teal-700 rounded-full mx-auto mb-4"><svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg></div>
-                            <h3 className="text-xl font-semibold mb-2">Pelatihan & Skill</h3>
-                            <p className="text-gray-600">Meningkatkan kompetensi anggota melalui workshop dan pelatihan rutin.</p>
-                        </div>
-                        <div className="bg-gray-50 p-8 rounded-lg text-center shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                            <div className="flex items-center justify-center h-16 w-16 bg-teal-100 text-teal-700 rounded-full mx-auto mb-4"><svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" /></svg></div>
-                            <h3 className="text-xl font-semibold mb-2">Kewirausahaan</h3>
-                            <p className="text-gray-600">Mengembangkan jiwa bisnis dan kemandirian finansial anggota.</p>
-                        </div>
-                        <div className="bg-gray-50 p-8 rounded-lg text-center shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                            <div className="flex items-center justify-center h-16 w-16 bg-teal-100 text-teal-700 rounded-full mx-auto mb-4"><svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg></div>
-                            <h3 className="text-xl font-semibold mb-2">Pengabdian Masyarakat</h3>
-                            <p className="text-gray-600">Memberikan kontribusi nyata dan dampak positif bagi lingkungan sekitar.</p>
-                        </div>
+                        {/* ... card kegiatan ... */}
                     </div>
                 </div>
             </section>
@@ -68,24 +54,24 @@ export default function Home({ auth, events }) {
                         <p className="text-gray-500 mt-2 max-w-2xl mx-auto">Ikuti perkembangan dan kegiatan terbaru dari UKM kami.</p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {events.map((event) => (
-                            <div key={event.id} className="bg-white rounded-lg shadow-md overflow-hidden group transition-shadow duration-300 hover:shadow-xl">
-                                <Link href={route('news.detail', event.id)}>
+                        {posts.map((post) => (
+                            <div key={post.id} className="bg-white rounded-lg shadow-md overflow-hidden group transition-shadow duration-300 hover:shadow-xl">
+                                <Link href={route('news.detail', post.slug)}>
                                     <img
                                         className="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-300"
-                                        src={event.image_url || `https://placehold.co/600x400/0f766e/FFFFFF?text=UKM+Event`}
-                                        alt={event.title}
+                                        src={post.image_url || `https://placehold.co/600x400/0f766e/FFFFFF?text=UKM+Event`}
+                                        alt={post.title}
                                     />
                                 </Link>
                                 <div className="p-6">
-                                    <p className="text-sm text-gray-500 mb-2">{formatDate(event.created_at)}</p>
+                                    <p className="text-sm text-gray-500 mb-2">{formatDate(post.created_at)}</p>
                                     <h3 className="text-xl font-semibold text-gray-800 mb-3 h-16 overflow-hidden">
-                                        <Link href={route('news.detail', event.id)} className="hover:text-teal-600 transition-colors">
-                                            {event.title}
+                                        <Link href={route('news.detail', post.slug)} className="hover:text-teal-600 transition-colors">
+                                            {post.title}
                                         </Link>
                                     </h3>
                                     <Link
-                                        href={route('news.detail', event.id)}
+                                        href={route('news.detail', post.slug)}
                                         className="font-semibold text-indigo-600 hover:text-indigo-800 transition-colors"
                                     >
                                         Baca Selengkapnya &rarr;

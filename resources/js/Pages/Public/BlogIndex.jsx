@@ -1,7 +1,7 @@
 import React from "react";
 import { Head, Link } from "@inertiajs/react";
 import PublicLayout from './PublicLayout';
-import Pagination from "@/Components/Pagination";
+import { Pagination } from "@/Components/Pagination"; // Diperbaiki
 
 export default function BlogIndex({ posts }) {
 

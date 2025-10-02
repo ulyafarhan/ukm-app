@@ -24,19 +24,18 @@ class MemberPageController extends Controller
             ->take(5)
             ->get(['id', 'description', 'amount', 'type', 'transaction_date']);
 
-        $stats = [
-            'membershipStatus' => 'Aktif', // Logika bisa ditambahkan nanti
-            'eventsAttended' => 0, // Logika presensi belum ada
-            'activityPoints' => 0, // Logika poin belum ada
-        ];
-        
         $duesStatus = Transaction::where('user_id', $user->id)
-            ->where('transaction_category_id', 1) // Asumsi ID 1 adalah "Iuran Wajib"
+            ->where('transaction_category_id', 1) 
             ->whereYear('transaction_date', now()->year)
             ->whereMonth('transaction_date', now()->month)
             ->exists();
-            
-        $stats['duesStatus'] = $duesStatus ? 'Lunas' : 'Belum Lunas';
+
+        $stats = [
+            'membershipStatus' => 'Aktif',
+            'eventsAttended' => 0, 
+            'activityPoints' => 0, 
+            'duesStatus' => $duesStatus ? 'Lunas' : 'Belum Lunas',
+        ];
 
 
         return Inertia::render('member/dashboard', [
@@ -59,6 +58,9 @@ class MemberPageController extends Controller
                 'email' => $member->email,
                 'joined' => $member->created_at->format('d M Y'),
             ]);
-        return Inertia::render('member/members/index', compact('members'));
+            
+        return Inertia::render('member/members/index', [
+            'members' => $members
+        ]);
     }
 }

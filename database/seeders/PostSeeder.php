@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Post;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -15,26 +14,23 @@ class PostSeeder extends Seeder
      */
     public function run(): void
     {
-        // Ambil user pertama yang ada di database untuk dijadikan penulis
-        $user = User::first();
+        $author = User::first();
 
-        // Jika tidak ada user, buat satu user baru
-        if (!$user) {
-            $user = User::factory()->create([
-                'name' => 'Admin PTQ',
-                'email' => 'admin@ptq.com',
-            ]);
+        if (!$author) {
+            $this->command->warn('Tidak ada user di database. Silakan jalankan UserSeeder terlebih dahulu.');
+            return;
         }
 
-        // Buat 15 berita contoh
         for ($i = 0; $i < 15; $i++) {
-            $title = fake()->sentence(6);
+            $title = fake()->unique()->sentence(rand(5, 10));
+
             Post::create([
-                'user_id' => $user->id,
+                'user_id' => $author->id,
                 'title' => $title,
                 'slug' => Str::slug($title),
-                'content' => '<p>' . implode('</p><p>', fake()->paragraphs(10)) . '</p>',
-                'published_at' => now()->subDays($i),
+                'content' => fake()->paragraphs(10, true),
+                'thumbnail' => null, // Anda bisa ganti dengan URL gambar jika ada
+                'published_at' => now(),
             ]);
         }
     }
